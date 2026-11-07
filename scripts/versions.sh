@@ -13,7 +13,7 @@ uv tree --outdated --depth 1 2>/dev/null | grep -E 'latest: ' || echo "all curre
 step "npm packages"
 (cd frontend && npm outdated) && echo "all current"
 
-# latest_cycle PRODUCT [lts]: the newest release line on endoflife.date (python, nodejs, postgresql); with lts, the
+# latest_cycle PRODUCT [lts]: the newest release line on endoflife.date (python, nodejs); with lts, the
 # newest line whose LTS has started
 latest_cycle() {
   curl -fsS "https://endoflife.date/api/$1.json" 2>/dev/null | python3 -c '
@@ -27,12 +27,5 @@ for c in json.load(sys.stdin):
 }
 
 step "Runtimes (pinned here vs newest release line)"
-printf '%-12s %-28s %s\n' "python" "$(cat .python-version), Dockerfile" "$(latest_cycle python)"
-printf '%-12s %-28s %s\n' "node" "$(grep -o 'node:[0-9]*' Dockerfile | head -1)" "$(latest_cycle nodejs lts) (newest LTS)"
-
-step "GitHub Actions"
-grep -ho 'uses: [^ ]*' .github/workflows/*.yml | sort -u | while read -r _ action; do
-  repo=${action%@*} pinned=${action#*@}
-  latest=$(gh api "repos/$repo/releases/latest" --jq .tag_name 2>/dev/null || echo "?")
-  [ "${latest%%.*}" = "$pinned" ] || printf '%-28s %-6s -> %s\n' "$repo" "$pinned" "$latest"
-done
+printf '%-12s %-28s %s\n' "python" "$(cat .python-version)" "$(latest_cycle python)"
+printf '%-12s %-28s %s\n' "node" "$(node --version 2>/dev/null || echo '?') (installed)" "$(latest_cycle nodejs lts) (newest LTS)"

@@ -1,7 +1,6 @@
 """Plain ASGI middleware (not BaseHTTPMiddleware, so streaming responses pass through untouched)."""
 
 import contextvars
-import json
 import logging
 import secrets
 import sys
@@ -61,31 +60,14 @@ class RequestContext:
             request_id.reset(token)
 
 
-class JsonFormatter(logging.Formatter):
-    """One JSON object per line: what Log Analytics (and any log tool) can query by field."""
-
-    def format(self, record: logging.LogRecord) -> str:
-        entry = {
-            "time": self.formatTime(record, "%Y-%m-%dT%H:%M:%S"),
-            "level": record.levelname,
-            "logger": record.name,
-            "message": record.getMessage(),
-            "request_id": request_id.get(),
-        }
-        if record.exc_info:
-            entry["exception"] = self.formatException(record.exc_info)
-        return json.dumps(entry)
-
-
-def setup_logging(json_logs: bool) -> None:
-    """JSON lines when deployed (LOG_JSON=true), readable lines locally."""
+def setup_logging() -> None:
+    """Readable log lines, each with its request id."""
     handler = logging.StreamHandler(sys.stdout)
     fmt = "%(asctime)s %(levelname)s %(name)s [%(request_id)s] %(message)s"
-    handler.setFormatter(JsonFormatter() if json_logs else logging.Formatter(fmt))
+    handler.setFormatter(logging.Formatter(fmt))
     handler.addFilter(_add_request_id)
     logging.basicConfig(level=logging.INFO, handlers=[handler], force=True)
     logging.getLogger("uvicorn.access").disabled = True  # RequestContext logs requests, with their id
-    logging.getLogger("alembic.runtime.plugins").setLevel(logging.WARNING)
 
 
 def _add_request_id(record: logging.LogRecord) -> bool:

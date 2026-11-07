@@ -11,8 +11,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     host: str = "127.0.0.1"
-    port: int = 8837  # local default, derived from the app's name; the container uses 8000
-    log_json: bool = False  # JSON log lines (the deploy sets it)
+    port: int = 8837
 
     webiq_api_key: str = ""  # from the Web IQ portal (Profile Management > API Keys); never sent to the browser
     webiq_base_url: str = "https://api.microsoft.ai/v3"

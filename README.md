@@ -143,7 +143,7 @@ themselves for grounding, only their metadata.
 
 ```bash
 scripts/run-local.sh --dev  # Vite with hot reload on http://localhost:5173
-scripts/check.sh            # ruff, pyright, pytest, API client up to date, prettier, oxlint, build: what CI runs
+scripts/check.sh            # ruff, pyright, pytest, API client up to date, prettier, oxlint, build
 ```
 
 Tests never call Web IQ or a model: they use a fake Web IQ (`httpx2.MockTransport`) and a scripted chat model with

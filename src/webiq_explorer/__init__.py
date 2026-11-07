@@ -6,5 +6,5 @@ def main() -> None:
     from .middleware import setup_logging
 
     settings = get_settings()
-    setup_logging(settings.log_json)
+    setup_logging()
     uvicorn.run(create_app(settings), host=settings.host, port=settings.port, log_config=None)

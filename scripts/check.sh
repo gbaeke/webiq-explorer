@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# The quality gate: everything CI runs, in the same order. Green here means green in CI.
+# The quality gate: lint, types, tests, API client, frontend build. Run it before every commit.
 #   scripts/check.sh          # check only
 #   scripts/check.sh --fix    # first let ruff fix and format what it can
 set -euo pipefail

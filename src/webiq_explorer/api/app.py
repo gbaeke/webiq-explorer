@@ -16,7 +16,7 @@ from ..webiq import WebIQ
 from . import agent, webiq
 from .errors import ApiError, install_handlers
 
-ROOT = Path(__file__).resolve().parents[3]  # the repository (or /app in the image): alembic.ini, frontend/dist
+ROOT = Path(__file__).resolve().parents[3]  # the repository: frontend/dist is served from here
 
 
 def create_app(
