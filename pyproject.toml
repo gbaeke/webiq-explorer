@@ -1,0 +1,57 @@
+[project]
+name = "webiq-explorer"
+version = "0.1.0"
+description = "Web IQ Explorer"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "deepagents>=0.7.34",
+    "fastapi>=0.162.2",
+    "httpx2>=2.16.0",
+    "langchain>=1.4.9",
+    "langchain-mcp-adapters>=0.3.2",
+    "langchain-openai>=1.7.4",
+    "pydantic-settings>=2.16.2",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.scripts]
+webiq-explorer = "webiq_explorer:main"
+
+[build-system]
+requires = ["uv_build>=0.13.4,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.414",
+    "pytest>=9.2.0",
+    "ruff>=0.17.4",
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+# pycodestyle, pyflakes, isort, bugbear, pyupgrade, simplify, comprehensions, return, pathlib, ruff, FastAPI,
+# security (bandit), unused arguments, print, commented-out code, and McCabe complexity: a function over 10
+# branches is a function to split
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "C4", "RET", "PTH", "RUF", "FAST", "S", "ARG", "T20", "ERA", "C90"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106", "ARG"]  # asserts, test secrets, fixtures used for their side effect
+"src/*/openapi.py" = ["T201"]  # prints the schema
+"examples/**" = ["T201"]  # command-line samples print their output
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.pyright]
+include = ["src", "tests"]
+typeCheckingMode = "standard"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+# langsmith (pulled in by langchain) still calls asyncio.iscoroutinefunction; not ours to fix
+filterwarnings = ["ignore:.*iscoroutinefunction.*:DeprecationWarning:langsmith"]
